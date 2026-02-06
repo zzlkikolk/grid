@@ -1,0 +1,21 @@
+package com.jerryz.grid.service;
+
+import com.jerryz.grid.pojo.po.PositionRecord;
+import com.jerryz.grid.pojo.ro.PageResult;
+import com.jerryz.grid.pojo.ro.Result;
+import com.jerryz.grid.pojo.vo.PageVO;
+import com.jerryz.grid.pojo.vo.PositionRecordVO;
+
+import java.util.List;
+
+/**
+ * @author zhangzhilin
+ * @version 2026
+ */
+public interface IPositionRecordService {
+
+    Result<Void> save(PositionRecordVO positionRecordVO);
+
+    PageResult<PositionRecord> selectList(PageVO pageVO);
+
+}
