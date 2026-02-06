@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <!-- 定义日志输出格式 -->
+    <springProperty scope="context" name="APP_NAME" source="spring.application.name"/>
+    <property name="CONSOLE_LOG_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %highlight(%-5level) %cyan(%logger{50}) - %msg%n"/>
+    <property name="FILE_LOG_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n"/>
+    <property name="LOG_HOME" value="${user.home}/logs/${APP_NAME}"/>
+    <property name="LOG_MAX_HISTORY" value="30"/>
+    <property name="LOG_MAX_FILE_SIZE" value="50MB"/>
+    <property name="LOG_TOTAL_SIZE_CAP" value="3GB"/>
+
+    <!-- 控制台输出 -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${CONSOLE_LOG_PATTERN}</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+
+    <!-- 按天滚动的文件日志 -->
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_HOME}/app.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_HOME}/app.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>${LOG_MAX_HISTORY}</maxHistory>
+            <totalSizeCap>${LOG_TOTAL_SIZE_CAP}</totalSizeCap>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${FILE_LOG_PATTERN}</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+
+    <!-- 错误日志单独输出 -->
+    <appender name="ERROR_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_HOME}/error.log</file>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>ERROR</level>
+        </filter>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_HOME}/error.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>${LOG_MAX_HISTORY}</maxHistory>
+            <totalSizeCap>${LOG_TOTAL_SIZE_CAP}</totalSizeCap>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${FILE_LOG_PATTERN}</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+
+    <!-- 慢SQL日志 -->
+    <appender name="SLOW_SQL_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_HOME}/slow-sql.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_HOME}/slow-sql.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>${LOG_MAX_HISTORY}</maxHistory>
+            <totalSizeCap>${LOG_TOTAL_SIZE_CAP}</totalSizeCap>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${FILE_LOG_PATTERN}</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+
+    <!-- JSON格式日志输出（用于ELK等日志收集系统） -->
+    <appender name="JSON_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_HOME}/app.json</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_HOME}/app.%d{yyyy-MM-dd}.json</fileNamePattern>
+            <maxHistory>${LOG_MAX_HISTORY}</maxHistory>
+            <totalSizeCap>${LOG_TOTAL_SIZE_CAP}</totalSizeCap>
+        </rollingPolicy>
+        <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+            <providers>
+                <timestamp>
+                    <timeZone>Asia/Shanghai</timeZone>
+                </timestamp>
+                <loggerName/>
+                <logLevel/>
+                <threadName/>
+                <message/>
+                <stackTrace>
+                    <throwableConverter class="net.logstash.logback.stacktrace.ShortenedThrowableConverter">
+                        <maxDepthPerThrowable>30</maxDepthPerThrowable>
+                        <maxLength>4096</maxLength>
+                        <shortenedClassNameLength>20</shortenedClassNameLength>
+                        <exclude>sun\.reflect\..*\.invoke</exclude>
+                        <exclude>net\.sf\.cglib\.proxy\.MethodProxy\.invoke</exclude>
+                    </throwableConverter>
+                </stackTrace>
+                <mdc/>
+                <arguments/>
+                <context/>
+                <callerData/>
+            </providers>
+        </encoder>
+    </appender>
+
+    <!-- 慢SQL日志记录器 -->
+    <logger name="slow.sql" level="INFO" additivity="false">
+        <appender-ref ref="SLOW_SQL_FILE"/>
+    </logger>
+
+    <!-- 慢SQL监控配置 -->
+    <logger name="com.example.demo.interceptor.SlowSqlInterceptor" level="INFO" additivity="false">
+        <appender-ref ref="SLOW_SQL_FILE"/>
+    </logger>
+
+    <!-- MyBatis SQL日志 -->
+    <logger name="com.example.demo.mapper" level="DEBUG" additivity="false">
+        <appender-ref ref="CONSOLE"/>
+    </logger>
+
+    <!-- Spring框架日志 -->
+    <logger name="org.springframework" level="INFO"/>
+    <logger name="org.springframework.web" level="INFO"/>
+    <logger name="org.springframework.security" level="INFO"/>
+
+    <!-- MyBatis日志 -->
+    <logger name="org.apache.ibatis" level="INFO"/>
+    <logger name="com.baomidou.mybatisplus" level="INFO"/>
+
+    <!-- 数据库连接池日志 -->
+    <logger name="com.zaxxer.hikari" level="INFO"/>
+
+    <!-- Redis日志 -->
+    <logger name="io.lettuce.core" level="INFO"/>
+    <logger name="org.springframework.data.redis" level="INFO"/>
+
+    <!-- 根日志配置 -->
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="FILE"/>
+        <appender-ref ref="ERROR_FILE"/>
+        <!-- 生产环境开启JSON日志 -->
+        <!-- <appender-ref ref="JSON_FILE"/> -->
+    </root>
+
+    <!-- 根据不同环境配置不同的日志级别 -->
+    <springProfile name="dev,test">
+        <logger name="com.example.demo" level="DEBUG"/>
+        <root level="DEBUG">
+            <appender-ref ref="CONSOLE"/>
+            <appender-ref ref="FILE"/>
+        </root>
+    </springProfile>
+
+    <springProfile name="prod">
+        <logger name="com.example.demo" level="INFO"/>
+        <root level="INFO">
+            <appender-ref ref="CONSOLE"/>
+            <appender-ref ref="FILE"/>
+            <appender-ref ref="ERROR_FILE"/>
+            <appender-ref ref="JSON_FILE"/>
+        </root>
+    </springProfile>
+</configuration>

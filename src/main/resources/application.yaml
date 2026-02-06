@@ -4,10 +4,9 @@ spring:
 
   datasource:
     driver-class-name: org.postgresql.Driver
-    hikari:
-      jdbc-url: jdbc:postgresql://localhost:5432/grid
-      username: zhangzhilin
-      password:
+    url: jdbc:postgresql://localhost:5432/grid
+    username: zhangzhilin
+    password:
 
   data:
     redis:
