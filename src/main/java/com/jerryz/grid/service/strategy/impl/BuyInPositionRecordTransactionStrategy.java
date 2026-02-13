@@ -1,5 +1,6 @@
 package com.jerryz.grid.service.strategy.impl;
 
+import com.jerryz.grid.em.TransactionTypeEm;
 import com.jerryz.grid.mapper.PositionRecordMapper;
 import com.jerryz.grid.pojo.po.PositionRecord;
 import com.jerryz.grid.pojo.vo.PositionRecordVO;
@@ -27,5 +28,10 @@ public class BuyInPositionRecordTransactionStrategy implements IPositionRecordTr
     @Override
     public PositionRecord handle(PositionRecordVO positionRecordVO) {
         return null;
+    }
+
+    @Override
+    public Integer getType() {
+        return TransactionTypeEm.BUY.getCode();
     }
 }

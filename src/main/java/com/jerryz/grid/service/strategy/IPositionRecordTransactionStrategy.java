@@ -18,4 +18,6 @@ public interface IPositionRecordTransactionStrategy {
      * @return 交易记录
      */
     PositionRecord handle(PositionRecordVO positionRecordVO);
+
+    Integer getType();
 }
