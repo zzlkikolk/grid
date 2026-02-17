@@ -7,6 +7,8 @@ import com.jerryz.grid.pojo.ro.Result;
 import com.jerryz.grid.pojo.vo.PageVO;
 import com.jerryz.grid.pojo.vo.PositionRecordVO;
 import com.jerryz.grid.service.IPositionRecordService;
+import com.jerryz.grid.service.strategy.IPositionRecordTransactionStrategy;
+import com.jerryz.grid.service.strategy.PositionRecordTransactionStrategyFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +25,8 @@ public class PositionRecordServiceImpl implements IPositionRecordService {
 
     private final PositionRecordMapper positionRecordMapper;
 
+    private final PositionRecordTransactionStrategyFactory positionRecordTransactionStrategyFactory;
+
     /**
      * 保存持仓记录
      * 1.买入记录，根据当前代码历史记录，计算出当前平均成本和持有数量
@@ -33,6 +37,13 @@ public class PositionRecordServiceImpl implements IPositionRecordService {
      */
     @Override
     public Result<Void> save(PositionRecordVO positionRecordVO) {
+
+        IPositionRecordTransactionStrategy positionRecordTransactionStrategy = positionRecordTransactionStrategyFactory
+                .getTransactionStrategy(positionRecordVO.getTransactionType());
+
+        if(positionRecordTransactionStrategy == null){
+            throw new IllegalArgumentException("策略不存在");
+        }
         return null;
     }
 
