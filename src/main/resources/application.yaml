@@ -20,6 +20,12 @@ spring:
     date-format: yyyy-MM-dd HH:mm:ss
     time-zone: GMT+8
 
-
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl  #開發 測試時使用  正式環境需要注釋
+    map-underscore-to-camel-case: true # 開啟駝峰命名
+    call-setters-on-nulls: true
+  #  mapper-locations: classpath*:com/igamebuy/api/mapper/xml/*.xml
+  mapper-locations: classpath*:com/jerryz/grid/mapper/xml/*.xml
 server:
   port: 80

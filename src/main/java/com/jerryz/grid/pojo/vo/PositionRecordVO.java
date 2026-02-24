@@ -1,5 +1,6 @@
 package com.jerryz.grid.pojo.vo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
@@ -24,6 +25,7 @@ public class PositionRecordVO {
     private String assetCode;
 
     //资产名称
+    @NotNull(message = "资产名称不能为空")
     private String assetName;
 
     /**
@@ -41,6 +43,7 @@ public class PositionRecordVO {
      * 交易时间
      */
     @NotNull(message = "交易时间不能为空")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime transactionTime;
 
 

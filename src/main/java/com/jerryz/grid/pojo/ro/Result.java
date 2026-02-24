@@ -28,6 +28,7 @@ public class Result<T> {
     /**
      * 响应数据
      */
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private T data;
 
     /**

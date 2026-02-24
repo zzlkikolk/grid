@@ -3,7 +3,9 @@ package com.jerryz.grid.handle;
 import com.jerryz.grid.pojo.ro.Result;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -26,6 +28,19 @@ public class GlobalExceptionHandler {
     public Result<Void> handleNotFoundException(NoHandlerFoundException e) {
         log.error("请求路径不存在: {}", e.getRequestURL(), e);
         return Result.error(HttpStatus.NOT_FOUND.value(), "请求路径不存在: " + e.getRequestURL());
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public Result<String> handleValidException(MethodArgumentNotValidException e) {
+
+        String msg = e.getBindingResult()
+                .getFieldErrors()
+                .stream()
+                .map(DefaultMessageSourceResolvable::getDefaultMessage)
+                .findFirst()
+                .orElse("参数校验失败");
+
+        return Result.error(HttpStatus.BAD_REQUEST.value(),msg);
     }
 
     /**
