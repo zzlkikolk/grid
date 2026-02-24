@@ -1,4 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.jerryz.grid.mapper.PositionRecordMapper">
+
+    <select id="selectAddRecordByAssetCode" resultType="com.jerryz.grid.pojo.po.PositionRecord">
+        SELECT *
+        FROM position_record
+        WHERE asset_code = #{assetCode} and transaction_type =1 and status = 1
+    </select>
+
+    <select id="selectPageListByAssetCode" resultType="com.jerryz.grid.pojo.po.PositionRecord">
+        SELECT *
+        FROM position_record
+        WHERE asset_code = #{assetCode}
+        ORDER BY created_at DESC
+    </select>
 </mapper>

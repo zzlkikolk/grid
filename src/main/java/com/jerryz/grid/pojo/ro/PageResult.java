@@ -26,18 +26,18 @@ public class PageResult<T> implements Serializable {
     /**
      * 当前页码
      */
-    private Integer pageNum;
+    private Long pageNum;
 
     /**
      * 每页数量
      */
-    private Integer pageSize;
+    private Long pageSize;
 
 
     /**
      * 总页数
      */
-    private Integer pages;
+    private Long pages;
 
     /**
      * 分页数据列表
@@ -55,12 +55,12 @@ public class PageResult<T> implements Serializable {
      * @param <T> 数据类型
      * @return 分页响应对象
      */
-    public static <T> PageResult<T> success(Integer pageNum, Integer pageSize, Long total, List<T> list) {
+    public static <T> PageResult<T> success(Long pageNum, Long pageSize, Long total, List<T> list) {
         PageResult<T> result = new PageResult<>();
         result.setPageNum(pageNum);
         result.setPageSize(pageSize);
         result.setTotal(total);
-        result.setPages((int) Math.ceil((double) total / pageSize));
+        result.setPages((long) Math.ceil((double) total / pageSize));
         result.setList(list);
         return result;
     }

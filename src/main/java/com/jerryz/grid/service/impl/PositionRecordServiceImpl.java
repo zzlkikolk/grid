@@ -1,10 +1,12 @@
 package com.jerryz.grid.service.impl;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jerryz.grid.mapper.PositionRecordMapper;
 import com.jerryz.grid.pojo.po.PositionRecord;
 import com.jerryz.grid.pojo.ro.PageResult;
 import com.jerryz.grid.pojo.ro.Result;
 import com.jerryz.grid.pojo.vo.PageVO;
+import com.jerryz.grid.pojo.vo.PositionRecordPageVO;
 import com.jerryz.grid.pojo.vo.PositionRecordVO;
 import com.jerryz.grid.service.IPositionRecordService;
 import com.jerryz.grid.service.strategy.IPositionRecordTransactionStrategy;
@@ -17,7 +19,6 @@ import java.util.List;
 /**
  * @author zhangzhilin
  * @version 2026
- * @date 2026/02/06 18:13
  */
 @Service
 @RequiredArgsConstructor
@@ -44,11 +45,18 @@ public class PositionRecordServiceImpl implements IPositionRecordService {
         if(positionRecordTransactionStrategy == null){
             throw new IllegalArgumentException("策略不存在");
         }
-        return null;
+
+        PositionRecord positionRecord = positionRecordTransactionStrategy.handle(positionRecordVO);
+        positionRecordMapper.insert(positionRecord);
+        return Result.success();
     }
 
     @Override
-    public PageResult<PositionRecord> selectList(PageVO pageVO) {
-        return null;
+    public PageResult<PositionRecord> selectList(PositionRecordPageVO pageVO) {
+        Page<PositionRecord> page = new Page<>(pageVO.getPageNum(), pageVO.getPageSize());
+
+        List<PositionRecord> positionRecordList = positionRecordMapper.selectPageListByAssetCode(page, pageVO.getAssetCode());
+
+        return PageResult.success(page.getPages(),page.getSize(),page.getTotal(),positionRecordList);
     }
 }

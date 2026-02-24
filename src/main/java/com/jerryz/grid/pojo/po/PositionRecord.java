@@ -52,7 +52,7 @@ public class PositionRecord {
      */
     private BigDecimal quantity;
     /**
-     * 交易金额(price*quantity)
+     * 交易金额(实际支付金额)
      */
     private BigDecimal amount;
     /**

@@ -4,6 +4,7 @@ import com.jerryz.grid.pojo.po.PositionRecord;
 import com.jerryz.grid.pojo.ro.PageResult;
 import com.jerryz.grid.pojo.ro.Result;
 import com.jerryz.grid.pojo.vo.PageVO;
+import com.jerryz.grid.pojo.vo.PositionRecordPageVO;
 import com.jerryz.grid.pojo.vo.PositionRecordVO;
 
 import java.util.List;
@@ -16,6 +17,6 @@ public interface IPositionRecordService {
 
     Result<Void> save(PositionRecordVO positionRecordVO);
 
-    PageResult<PositionRecord> selectList(PageVO pageVO);
+    PageResult<PositionRecord> selectList(PositionRecordPageVO pageVO);
 
 }
