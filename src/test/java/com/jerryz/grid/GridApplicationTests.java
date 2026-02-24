@@ -10,4 +10,13 @@ class GridApplicationTests {
     void contextLoads() {
     }
 
+
+    public static int F(int x){
+        return 2*x+1;
+    }
+
+    public static void main(String[] args) {
+        int y = F(9);
+        System.out.println(y);
+    }
 }
