@@ -122,4 +122,8 @@ public class PositionRecord {
      * 更新时间
      */
     private LocalDateTime updatedAt;
+
+    private String trackIndexCode;
+
+    private BigDecimal trackIndex;
 }

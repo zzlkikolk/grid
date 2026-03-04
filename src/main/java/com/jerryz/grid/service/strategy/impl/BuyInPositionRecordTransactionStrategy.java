@@ -45,6 +45,8 @@ public class BuyInPositionRecordTransactionStrategy implements IPositionRecordTr
         positionRecord.setFee(positionRecordVO.getFee());
         positionRecord.setStatus(1);
         positionRecord.setSettlementStatus(1);
+        positionRecord.setTrackIndexCode(positionRecordVO.getTrackIndexCode());
+        positionRecord.setTrackIndex(positionRecordVO.getTrackIndex());
 
         //查询当前代码历史记录，计算出当前平均成本和持有数量
         List<PositionRecord> positionRecordList = positionRecordMapper.selectAddRecordByAssetCode(positionRecordVO.getAssetCode());

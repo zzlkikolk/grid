@@ -76,5 +76,9 @@ public class PositionRecordVO {
     @NotNull(message = "交易税费不能为空")
     private BigDecimal tax;
 
+    private String trackIndexCode;
+
+    private BigDecimal trackIndex;
+
 
 }
