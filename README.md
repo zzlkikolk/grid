@@ -124,6 +124,8 @@ CREATE TABLE "public"."position_record" (
                                             "external_id" varchar(64) COLLATE "pg_catalog"."default",
                                             "created_at" timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
                                             "updated_at" timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                                            "track_index_code" varchar(128) COLLATE "pg_catalog"."default",
+                                            "track_index" numeric(18,2),
                                             CONSTRAINT "position_record_pkey" PRIMARY KEY ("id"),
                                             CONSTRAINT "chk_transaction_type" CHECK (transaction_type >= 1 AND transaction_type <= 4),
                                             CONSTRAINT "chk_status" CHECK (status >= 1 AND status <= 2),
@@ -188,6 +190,10 @@ COMMENT ON COLUMN "public"."position_record"."external_id" IS '外部系统ID';
 COMMENT ON COLUMN "public"."position_record"."created_at" IS '创建时间';
 
 COMMENT ON COLUMN "public"."position_record"."updated_at" IS '更新时间';
+
+COMMENT ON COLUMN "public"."position_record"."track_index_code" IS '跟踪的指数代码';
+
+COMMENT ON COLUMN "public"."position_record"."track_index" IS '当日指数值';
 
 COMMENT ON TABLE "public"."position_record" IS '个人持仓记录表';
 ```
