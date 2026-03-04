@@ -29,6 +29,12 @@ public class ComputedAverageCostUtil {
         private String consumerAmt;
     }
 
+    /**
+     * 计算累计幅度
+     * @param list 用户持仓列表
+     * @param localIndex 当前点数
+     * @param localValue 当前净值
+     */
     public static void computed(List<UserMemberConsumer> list, String localIndex, String localValue){
         BigDecimal all = list.stream()
                 .map(u -> new BigDecimal(u.getConsumerAmt()))
