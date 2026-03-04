@@ -46,6 +46,17 @@ public class ComputedAverageCostUtil {
                 .reduce(BigDecimal.ZERO, BigDecimal::add)
                 .setScale(4, RoundingMode.HALF_UP);
 
+        //加权点数
+        BigDecimal totalWeightedIndex = list.stream()
+                .map(u -> new BigDecimal(u.getIndex())
+                        .multiply(new BigDecimal(u.getCount())))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        //平均点数
+        BigDecimal averageIndex = totalWeightedIndex
+                .divide(count, 8, RoundingMode.HALF_UP);
+
+
         //初始值
         String startValue = list.get(0).getValue();
         String startIndex = list.get(0).getIndex();
@@ -63,9 +74,16 @@ public class ComputedAverageCostUtil {
         BigDecimal value = localValueNum.subtract(startValueNum).divide(startValueNum, 4, RoundingMode.HALF_UP).multiply(new BigDecimal(100));
 
         BigDecimal newValue = localValueNum.subtract(averageValue).divide(averageValue, 4, RoundingMode.HALF_UP).multiply(new BigDecimal(100));
+
+        BigDecimal indexAmplitude = localIndexNUm
+                .subtract(averageIndex)
+                .divide(averageIndex, 4, RoundingMode.HALF_UP)
+                .multiply(new BigDecimal(100));
+
         System.out.println("净值幅度->"+value);
         System.out.println("平均净值幅度->"+newValue);
         System.out.println("点数幅度->"+index);
+        System.out.println("摊薄点数幅度->" + indexAmplitude);
     }
 
     public static void main(String[] args) {
