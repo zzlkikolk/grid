@@ -67,7 +67,7 @@ public class ComputedAverageCostUtil {
         userMemberConsumer1.setConsumerAmt("5000");
         userMemberConsumer1.setCount("3091.31");
         userMemberConsumer1.setValue("1.6155");
-        userMemberConsumer1.setIndex("4328.27");
+        userMemberConsumer1.setIndex("4254.53");
 
 
 
@@ -75,7 +75,7 @@ public class ComputedAverageCostUtil {
         userMemberConsumer2.setConsumerAmt("2000");
         userMemberConsumer2.setCount("1255.40");
         userMemberConsumer2.setValue("1.5912");
-        userMemberConsumer2.setIndex("4104.77");
+        userMemberConsumer2.setIndex("4188.98");
 
         List<UserMemberConsumer> list = new ArrayList<>();
         list.add(userMemberConsumer1);
