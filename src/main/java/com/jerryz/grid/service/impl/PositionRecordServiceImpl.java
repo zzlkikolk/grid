@@ -5,14 +5,19 @@ import com.jerryz.grid.mapper.PositionRecordMapper;
 import com.jerryz.grid.pojo.po.PositionRecord;
 import com.jerryz.grid.pojo.ro.PageResult;
 import com.jerryz.grid.pojo.ro.Result;
+import com.jerryz.grid.pojo.ro.positionRecord.PriceChangeRateRO;
 import com.jerryz.grid.pojo.vo.PageVO;
 import com.jerryz.grid.pojo.vo.PositionRecordPageVO;
 import com.jerryz.grid.pojo.vo.PositionRecordVO;
+import com.jerryz.grid.pojo.vo.positionRecord.PredictPriceChangeRateVO;
 import com.jerryz.grid.service.IPositionRecordService;
 import com.jerryz.grid.service.strategy.IPositionRecordTransactionStrategy;
 import com.jerryz.grid.service.strategy.PositionRecordTransactionStrategyFactory;
+import com.jerryz.grid.util.ComputedAverageCostUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 
@@ -58,5 +63,26 @@ public class PositionRecordServiceImpl implements IPositionRecordService {
         List<PositionRecord> positionRecordList = positionRecordMapper.selectPageListByAssetCode(page, pageVO.getAssetCode());
 
         return PageResult.success(page.getPages(),page.getSize(),page.getTotal(),positionRecordList);
+    }
+
+    /**
+     * 预测价格变化率
+     * @param predictPriceChangeRateVO 预测价格变化率参数
+     * @return 结果
+     */
+    @Override
+    public Result<PriceChangeRateRO> predictPriceChangeRate(PredictPriceChangeRateVO predictPriceChangeRateVO) {
+
+        List<PositionRecord> positionRecordList = positionRecordMapper.selectAddRecordByAssetCode(predictPriceChangeRateVO.getAssetCode());
+        if(CollectionUtils.isEmpty(positionRecordList)){
+            return Result.success();
+        }
+
+        ComputedAverageCostUtil.UserMemberConsumerResult  userMemberConsumerResult = ComputedAverageCostUtil.computed(positionRecordList,predictPriceChangeRateVO.getTodayTrackIndex() ,predictPriceChangeRateVO.getLocalPrice());
+        PriceChangeRateRO priceChangeRateRO = new PriceChangeRateRO();
+        BeanUtils.copyProperties(userMemberConsumerResult,priceChangeRateRO);
+        priceChangeRateRO.setAssetCode(predictPriceChangeRateVO.getAssetCode());
+        priceChangeRateRO.setAssetName(positionRecordList.get(0).getAssetName());
+        return Result.success(priceChangeRateRO);
     }
 }

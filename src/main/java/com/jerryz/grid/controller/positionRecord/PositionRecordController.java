@@ -3,9 +3,11 @@ package com.jerryz.grid.controller.positionRecord;
 import com.jerryz.grid.pojo.po.PositionRecord;
 import com.jerryz.grid.pojo.ro.PageResult;
 import com.jerryz.grid.pojo.ro.Result;
+import com.jerryz.grid.pojo.ro.positionRecord.PriceChangeRateRO;
 import com.jerryz.grid.pojo.vo.PageVO;
 import com.jerryz.grid.pojo.vo.PositionRecordPageVO;
 import com.jerryz.grid.pojo.vo.PositionRecordVO;
+import com.jerryz.grid.pojo.vo.positionRecord.PredictPriceChangeRateVO;
 import com.jerryz.grid.service.IPositionRecordService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -37,5 +39,9 @@ public class PositionRecordController {
         return positionRecordServiceImpl.selectList(pageVO);
     }
 
+    @GetMapping("/position_record/predict_price_change_rate")
+    public Result<PriceChangeRateRO> predictPriceChangeRate(@Valid PredictPriceChangeRateVO predictPriceChangeRateVO){
+        return positionRecordServiceImpl.predictPriceChangeRate(predictPriceChangeRateVO);
+    }
 
 }

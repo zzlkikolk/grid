@@ -1,5 +1,6 @@
 package com.jerryz.grid.util;
 
+import com.jerryz.grid.pojo.po.PositionRecord;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -14,42 +15,42 @@ import java.util.List;
 public class ComputedAverageCostUtil {
 
     @Data
-    public static class UserMemberConsumer {
+    public static class UserMemberConsumerResult {
 
-        //净值
-        private String value;
+        //平均净值幅度
+        private BigDecimal averageCostRate;
 
-        //点数
-        private String index;
+        //净值幅度
+        private BigDecimal costRate;
 
-        //数量
-        private String count;
+        //点数幅度
+        private BigDecimal indexRate;
 
-        //金额
-        private String consumerAmt;
+        //摊薄点数幅度
+        private BigDecimal averageIndexRate;
     }
 
     /**
      * 计算累计幅度
      * @param list 用户持仓列表
-     * @param localIndex 当前点数
-     * @param localValue 当前净值
+     * @param todayIndex 当前点数
+     * @param todayPrice 当前净值
      */
-    public static void computed(List<UserMemberConsumer> list, String localIndex, String localValue){
+    public static UserMemberConsumerResult computed(List<PositionRecord> list, BigDecimal todayIndex, BigDecimal todayPrice){
         BigDecimal all = list.stream()
-                .map(u -> new BigDecimal(u.getConsumerAmt()))
+                .map(PositionRecord::getPrice)
                 .reduce(BigDecimal.ZERO, BigDecimal::add)
                 .setScale(4, RoundingMode.HALF_UP);
 
         BigDecimal count = list.stream()
-                .map(u->new BigDecimal(u.getCount()))
+                .map(PositionRecord::getQuantity)
                 .reduce(BigDecimal.ZERO, BigDecimal::add)
                 .setScale(4, RoundingMode.HALF_UP);
 
         //加权点数
         BigDecimal totalWeightedIndex = list.stream()
-                .map(u -> new BigDecimal(u.getIndex())
-                        .multiply(new BigDecimal(u.getCount())))
+                .map(u -> u.getTrackIndex()
+                        .multiply(u.getQuantity()))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         //平均点数
@@ -57,54 +58,30 @@ public class ComputedAverageCostUtil {
                 .divide(count, 8, RoundingMode.HALF_UP);
 
 
-        //初始值
-        String startValue = list.get(0).getValue();
-        String startIndex = list.get(0).getIndex();
 
         BigDecimal averageValue = all.divide(count, 4, RoundingMode.HALF_UP);
 
         //(B - A) / A × 100%
-        BigDecimal startIndexNum = new BigDecimal(startIndex);
-        BigDecimal localIndexNUm = new BigDecimal(localIndex);
-        BigDecimal startValueNum = new BigDecimal(startValue);
-        BigDecimal localValueNum = new BigDecimal(localValue);
+        BigDecimal startIndexNum = list.get(0).getTrackIndex();
+        BigDecimal startValueNum = list.get(0).getPrice();
 
-        BigDecimal index = localIndexNUm.subtract(startIndexNum).divide(startIndexNum, 4, RoundingMode.HALF_UP).multiply(new BigDecimal(100));
+        BigDecimal index = todayIndex.subtract(startIndexNum).divide(startIndexNum, 4, RoundingMode.HALF_UP).multiply(new BigDecimal(100));
 
-        BigDecimal value = localValueNum.subtract(startValueNum).divide(startValueNum, 4, RoundingMode.HALF_UP).multiply(new BigDecimal(100));
+        BigDecimal value = todayPrice.subtract(startValueNum).divide(startValueNum, 4, RoundingMode.HALF_UP).multiply(new BigDecimal(100));
 
-        BigDecimal newValue = localValueNum.subtract(averageValue).divide(averageValue, 4, RoundingMode.HALF_UP).multiply(new BigDecimal(100));
+        BigDecimal newValue = todayPrice.subtract(averageValue).divide(averageValue, 4, RoundingMode.HALF_UP).multiply(new BigDecimal(100));
 
-        BigDecimal indexAmplitude = localIndexNUm
+        BigDecimal indexAmplitude = todayIndex
                 .subtract(averageIndex)
                 .divide(averageIndex, 4, RoundingMode.HALF_UP)
                 .multiply(new BigDecimal(100));
 
-        System.out.println("净值幅度->"+value);
-        System.out.println("平均净值幅度->"+newValue);
-        System.out.println("点数幅度->"+index);
-        System.out.println("摊薄点数幅度->" + indexAmplitude);
+        UserMemberConsumerResult result = new UserMemberConsumerResult();
+        result.setAverageCostRate(newValue);
+        result.setCostRate(value);
+        result.setIndexRate(index);
+        result.setAverageIndexRate(indexAmplitude);
+        return result;
     }
 
-    public static void main(String[] args) {
-        UserMemberConsumer userMemberConsumer1 = new UserMemberConsumer();
-        userMemberConsumer1.setConsumerAmt("5000");
-        userMemberConsumer1.setCount("3091.31");
-        userMemberConsumer1.setValue("1.6155");
-        userMemberConsumer1.setIndex("4254.53");
-
-
-
-        UserMemberConsumer userMemberConsumer2 = new UserMemberConsumer();
-        userMemberConsumer2.setConsumerAmt("2000");
-        userMemberConsumer2.setCount("1255.40");
-        userMemberConsumer2.setValue("1.5912");
-        userMemberConsumer2.setIndex("4188.98");
-
-        List<UserMemberConsumer> list = new ArrayList<>();
-        list.add(userMemberConsumer1);
-        list.add(userMemberConsumer2);
-
-        ComputedAverageCostUtil.computed(list,"4104.77","1.5611");
-    }
 }
