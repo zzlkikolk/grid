@@ -51,7 +51,7 @@ class SellPositionRecordTransactionStrategyTest {
     @BeforeEach
     void setUp() {
         sellVO = new PositionRecordVO();
-        sellVO.setAssetType((short) 1);
+        sellVO.setAssetType(1);
         sellVO.setAssetCode("000001");
         sellVO.setAssetName("平安银行");
         sellVO.setTransactionDate(LocalDate.now());
@@ -290,7 +290,7 @@ class SellPositionRecordTransactionStrategyTest {
                                            BigDecimal price, BigDecimal quantity,
                                            BigDecimal amount, BigDecimal averageCost) {
         PositionRecord record = new PositionRecord();
-        record.setAssetType((short) 1);
+        record.setAssetType( 1);
         record.setAssetCode(assetCode);
         record.setAssetName(assetName);
         record.setTransactionType(TransactionTypeEm.BUY.getCode());
@@ -313,7 +313,7 @@ class SellPositionRecordTransactionStrategyTest {
                                            BigDecimal amount, BigDecimal averageCost, 
                                            BigDecimal currentQuantity) {
         PositionRecord record = new PositionRecord();
-        record.setAssetType((short) 1);
+        record.setAssetType( 1);
         record.setAssetCode(assetCode);
         record.setAssetName(assetName);
         record.setTransactionType(TransactionTypeEm.SELL.getCode());
