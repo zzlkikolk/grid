@@ -20,5 +20,12 @@ public interface PositionRecordMapper extends BaseMapper<PositionRecord> {
      */
     List<PositionRecord> selectAddRecordByAssetCode(String assetCode);
 
+    /**
+     * 根据代码查找所有交易记录（包括买入和卖出）
+     * @param assetCode 代码
+     * @return 所有交易记录列表
+     */
+    List<PositionRecord> selectAllRecordsByAssetCode(String assetCode);
+
     List<PositionRecord> selectPageListByAssetCode(Page<PositionRecord> page,String assetCode);
 }
