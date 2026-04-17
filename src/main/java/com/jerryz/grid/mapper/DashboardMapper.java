@@ -1,6 +1,6 @@
 package com.jerryz.grid.mapper;
 
-import com.jerryz.grid.pojo.vo.dashboard.AssetTypeStatVO;
+import com.jerryz.grid.pojo.ro.dashboard.AssetTypeStatRO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -17,7 +17,7 @@ public interface DashboardMapper {
      * 查询各资产类型统计
      * @return 各资产类型统计列表
      */
-    List<AssetTypeStatVO> selectAssetTypeStats();
+    List<AssetTypeStatRO> selectAssetTypeStats();
 
     /**
      * 查询总持仓金额
@@ -35,20 +35,20 @@ public interface DashboardMapper {
      * 查询各资产的持仓金额和数量
      * @return 各资产统计列表
      */
-    List<AssetDetailVO> selectAssetDetails();
+    List<AssetDetailRO> selectAssetDetails();
 
     /**
      * 根据资产类型查询各资产的持仓金额和数量
      * @param assetType 资产类型
      * @return 指定类型的资产统计列表
      */
-    List<AssetDetailVO> selectAssetDetailsByType(Integer assetType);
+    List<AssetDetailRO> selectAssetDetailsByType(Integer assetType);
 
     /**
-     * 资产详情VO
+     * 资产详情RO
      */
     @lombok.Data
-    class AssetDetailVO {
+    class AssetDetailRO {
         private String assetCode;
         private String assetName;
         private Integer assetType;

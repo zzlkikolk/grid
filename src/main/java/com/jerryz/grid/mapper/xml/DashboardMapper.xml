@@ -3,7 +3,7 @@
 <mapper namespace="com.jerryz.grid.mapper.DashboardMapper">
 
     <!-- 查询各资产类型统计 -->
-    <select id="selectAssetTypeStats" resultType="com.jerryz.grid.pojo.vo.dashboard.AssetTypeStatVO">
+    <select id="selectAssetTypeStats" resultType="com.jerryz.grid.pojo.ro.dashboard.AssetTypeStatRO">
         SELECT
             asset_type AS assetType,
             CASE asset_type
@@ -46,7 +46,7 @@
     </select>
 
     <!-- 查询各资产的持仓金额和数量 -->
-    <select id="selectAssetDetails" resultType="com.jerryz.grid.mapper.DashboardMapper$AssetDetailVO">
+    <select id="selectAssetDetails" resultType="com.jerryz.grid.mapper.DashboardMapper$AssetDetailRO">
         SELECT
             asset_code AS assetCode,
             MAX(asset_name) AS assetName,
@@ -65,7 +65,7 @@
     </select>
 
     <!-- 根据资产类型查询各资产的持仓金额和数量 -->
-    <select id="selectAssetDetailsByType" resultType="com.jerryz.grid.mapper.DashboardMapper$AssetDetailVO">
+    <select id="selectAssetDetailsByType" resultType="com.jerryz.grid.mapper.DashboardMapper$AssetDetailRO">
         SELECT
             asset_code AS assetCode,
             MAX(asset_name) AS assetName,

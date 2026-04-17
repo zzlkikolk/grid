@@ -1,7 +1,7 @@
 package com.jerryz.grid.controller.dashboard;
 
 import com.jerryz.grid.pojo.ro.Result;
-import com.jerryz.grid.pojo.vo.dashboard.DashboardVO;
+import com.jerryz.grid.pojo.ro.dashboard.DashboardRO;
 import com.jerryz.grid.service.IDashboardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,7 +24,7 @@ public class DashboardController {
      * @return 大屏数据
      */
     @GetMapping("/data")
-    public Result<DashboardVO> getDashboardData() {
+    public Result<DashboardRO> getDashboardData() {
         return dashboardServiceImpl.getDashboardData();
     }
 
@@ -33,7 +33,7 @@ public class DashboardController {
      * @return 资产类型占比数据
      */
     @GetMapping("/asset_type_ratio")
-    public Result<DashboardVO> getAssetTypeRatio() {
+    public Result<DashboardRO> getAssetTypeRatio() {
         return dashboardServiceImpl.getAssetTypeRatio();
     }
 
@@ -42,7 +42,7 @@ public class DashboardController {
      * @return 资产金额数据
      */
     @GetMapping("/asset_amount_stats")
-    public Result<DashboardVO> getAssetAmountStats() {
+    public Result<DashboardRO> getAssetAmountStats() {
         return dashboardServiceImpl.getAssetAmountStats();
     }
 
@@ -52,7 +52,7 @@ public class DashboardController {
      * @return 资产详情数据
      */
     @GetMapping("/asset_details")
-    public Result<DashboardVO> getAssetDetailsByType(@RequestParam Integer assetType) {
+    public Result<DashboardRO> getAssetDetailsByType(@RequestParam Integer assetType) {
         return dashboardServiceImpl.getAssetDetailsByType(assetType);
     }
 }
