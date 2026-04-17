@@ -5,20 +5,20 @@
     <select id="selectAddRecordByAssetCode" resultType="com.jerryz.grid.pojo.po.PositionRecord">
         SELECT *
         FROM position_record
-        WHERE asset_code = #{assetCode} and transaction_type =1 and status = 1 order by created_at
+        WHERE asset_code = #{assetCode} and transaction_type =1 and status = 1 order by transaction_date
     </select>
 
     <select id="selectAllRecordsByAssetCode" resultType="com.jerryz.grid.pojo.po.PositionRecord">
         SELECT *
         FROM position_record
         WHERE asset_code = #{assetCode} and transaction_type in (1,2)
-        ORDER BY created_at
+        ORDER BY transaction_date
     </select>
 
     <select id="selectPageListByAssetCode" resultType="com.jerryz.grid.pojo.po.PositionRecord">
         SELECT *
         FROM position_record
         WHERE asset_code = #{assetCode}
-        ORDER BY created_at DESC
+        ORDER BY transaction_date DESC
     </select>
 </mapper>

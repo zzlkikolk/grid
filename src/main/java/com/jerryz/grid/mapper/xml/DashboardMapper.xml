@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jerryz.grid.mapper.DashboardMapper">
+
+    <!-- 查询各资产类型统计 -->
+    <select id="selectAssetTypeStats" resultType="com.jerryz.grid.pojo.vo.dashboard.AssetTypeStatVO">
+        SELECT
+            asset_type AS assetType,
+            CASE asset_type
+                WHEN 1 THEN '股票'
+                WHEN 2 THEN '基金'
+                WHEN 3 THEN '债券'
+                WHEN 4 THEN '其他'
+                ELSE '未知'
+            END AS assetTypeName,
+            COUNT(DISTINCT asset_code) AS assetCount,
+            COALESCE(SUM(
+                CASE WHEN transaction_type = 1 THEN amount + fee + tax
+                     WHEN transaction_type = 2 THEN -(amount - fee - tax)
+                     ELSE 0
+                END
+            ), 0) AS totalAmount
+        FROM position_record
+        WHERE status = 1
+        GROUP BY asset_type
+        ORDER BY asset_type
+    </select>
+
+    <!-- 查询总持仓金额（买入金额 - 卖出金额，考虑手续费和税费） -->
+    <select id="selectTotalAmount" resultType="java.math.BigDecimal">
+        SELECT COALESCE(SUM(
+            CASE WHEN transaction_type = 1 THEN amount + fee + tax
+                 WHEN transaction_type = 2 THEN -(amount - fee - tax)
+                 ELSE 0
+            END
+        ), 0) AS totalAmount
+        FROM position_record
+        WHERE status = 1
+    </select>
+
+    <!-- 查询总资产数量（持有中的不同资产代码数量） -->
+    <select id="selectTotalAssetCount" resultType="java.lang.Long">
+        SELECT COUNT(DISTINCT asset_code)
+        FROM position_record
+        WHERE status = 1
+    </select>
+
+    <!-- 查询各资产的持仓金额和数量 -->
+    <select id="selectAssetDetails" resultType="com.jerryz.grid.mapper.DashboardMapper$AssetDetailVO">
+        SELECT
+            asset_code AS assetCode,
+            MAX(asset_name) AS assetName,
+            asset_type AS assetType,
+            COALESCE(SUM(
+                CASE WHEN transaction_type = 1 THEN amount + fee + tax
+                     WHEN transaction_type = 2 THEN -(amount - fee - tax)
+                     ELSE 0
+                END
+            ), 0) AS totalAmount,
+            MAX(current_quantity) AS currentQuantity
+        FROM position_record
+        WHERE status = 1
+        GROUP BY asset_code, asset_type
+        ORDER BY totalAmount DESC
+    </select>
+
+    <!-- 根据资产类型查询各资产的持仓金额和数量 -->
+    <select id="selectAssetDetailsByType" resultType="com.jerryz.grid.mapper.DashboardMapper$AssetDetailVO">
+        SELECT
+            asset_code AS assetCode,
+            MAX(asset_name) AS assetName,
+            asset_type AS assetType,
+            COALESCE(SUM(
+                CASE WHEN transaction_type = 1 THEN amount + fee + tax
+                     WHEN transaction_type = 2 THEN -(amount - fee + tax)
+                     ELSE 0
+                END
+            ), 0) AS totalAmount,
+            MAX(current_quantity) AS currentQuantity
+        FROM position_record
+        WHERE status = 1 AND asset_type = #{assetType}
+        GROUP BY asset_code, asset_type
+        ORDER BY totalAmount DESC
+    </select>
+
+</mapper>

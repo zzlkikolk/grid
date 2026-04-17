@@ -201,11 +201,17 @@ public class BuyInPositionRecordTransactionStrategy implements IPositionRecordTr
                 averageCost = positionRecordVO.getPrice();
                 currentQuantity = positionRecordVO.getQuantity();
             }else {
-                //计算实际持有成本 = 所有买入金额 - 所有卖出对应的成本
+                //计算实际持有成本 = 所有买入金额(含手续费) - 所有卖出对应的成本
+                //买入金额应包含手续费，这样才能准确计算持仓成本
                 //卖出对应的成本使用卖出时的average_cost
                 BigDecimal buyAmount = allRecords.stream()
                         .filter(r -> r.getTransactionType().equals(TransactionTypeEm.BUY.getCode()))
-                        .map(PositionRecord::getAmount)
+                        .map(r -> {
+                            BigDecimal amount = r.getAmount() != null ? r.getAmount() : BigDecimal.ZERO;
+                            BigDecimal fee = r.getFee() != null ? r.getFee() : BigDecimal.ZERO;
+                            BigDecimal tax = r.getTax() != null ? r.getTax() : BigDecimal.ZERO;
+                            return amount.add(fee).add(tax);
+                        })
                         .reduce(BigDecimal.ZERO, BigDecimal::add)
                         .setScale(4, RoundingMode.HALF_UP);
 
@@ -217,8 +223,14 @@ public class BuyInPositionRecordTransactionStrategy implements IPositionRecordTr
 
                 BigDecimal existingCost = buyAmount.subtract(sellCost);
 
-                //新平均成本 = (原实际持有成本 + 本次买入金额) / (原实际持有数量 + 本次买入数量)
-                BigDecimal newTotalCost = existingCost.add(positionRecordVO.getAmount()).setScale(4, RoundingMode.HALF_UP);
+                //本次买入成本也要包含手续费
+                BigDecimal currentBuyCost = positionRecordVO.getAmount()
+                        .add(positionRecordVO.getFee() != null ? positionRecordVO.getFee() : BigDecimal.ZERO)
+                        .add(positionRecordVO.getTax() != null ? positionRecordVO.getTax() : BigDecimal.ZERO)
+                        .setScale(4, RoundingMode.HALF_UP);
+
+                //新平均成本 = (原实际持有成本 + 本次买入成本(含手续费)) / (原实际持有数量 + 本次买入数量)
+                BigDecimal newTotalCost = existingCost.add(currentBuyCost).setScale(4, RoundingMode.HALF_UP);
                 currentQuantity = existingQuantity.add(positionRecordVO.getQuantity()).setScale(4, RoundingMode.HALF_UP);
                 averageCost = newTotalCost.divide(currentQuantity, 4, RoundingMode.HALF_UP);
             }
